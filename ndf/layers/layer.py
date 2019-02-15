@@ -10,8 +10,9 @@ class Layer:
     # each layer has defined number of inputs, `None` if not limited
     number_of_inputs = None
 
-    def __init__(self):
+    def __init__(self, name=None):
         self.previous_layers = []
+        self.name = name
 
     def __cal__(self, layers):
         self.previous_layers = layers

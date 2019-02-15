@@ -7,7 +7,8 @@ class Conv2D(Layer):
     number_of_inputs = 1
 
     def __init__(
-            self, filters, kernel_size, kernel_weights, bias_weights, stride=1, padding="valid"):
+            self, filters, kernel_size, kernel_weights, bias_weights, stride=1,
+            padding="valid", **kwargs):
         self.no_filters = filters
         self.kernel_size = kernel_size
         self.stride = stride
@@ -16,7 +17,7 @@ class Conv2D(Layer):
         self.b = bias_weights
         self.previous_layer = None
         self.next_layers = []
-        super(Conv2D, self).__init__()
+        super(Conv2D, self).__init__(**kwargs)
 
 
     def padding_size(self, input_shape, output_shape):

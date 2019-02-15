@@ -46,10 +46,10 @@ class MaxPooling2D(Layer):
 
     number_of_inputs = 1
 
-    def __init__(self, pool_size, strides=1):
+    def __init__(self, pool_size, strides=1, **kwargs):
         self.pool_size = pool_size
         self.stride = strides
-        super(MaxPooling2D, self).__init__()
+        super(MaxPooling2D, self).__init__(**kwargs)
 
     def forward(self, x):
         x = x[0]  # this layer has only one input
@@ -71,10 +71,10 @@ class AveragePooling2D(Layer):
 
     number_of_inputs = 1
 
-    def __init__(self, pool_size, strides=1):
+    def __init__(self, pool_size, strides=1, **kwargs):
         self.pool_size = pool_size
         self.stride = strides
-        super(AveragePooling2D, self).__init__()
+        super(AveragePooling2D, self).__init__(**kwargs)
 
     def forward(self, x):
         x = x[0]  # this layer has only one input
