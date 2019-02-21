@@ -4,6 +4,7 @@ class Model:
         self.outputs = outputs
 
     def predict(self, inputs):
+        # TODO: support setting a batch size
         # dictionary to hold predictions of layers in
         # case they are required again
         layer_predictions = {}
