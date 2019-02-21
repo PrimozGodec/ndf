@@ -14,8 +14,12 @@ class Layer:
         self.previous_layers = []
         self.name = name
 
-    def __cal__(self, layers):
-        self.previous_layers = layers
+    def __call__(self, layers):
+        if isinstance(layers, list):
+            self.previous_layers = layers
+        else:
+            self.previous_layers.append(layers)
+        return self
 
     def predict(self, inputs, layers_predictions):
         if id(self) in layers_predictions:
@@ -24,13 +28,15 @@ class Layer:
         # evaluate up the tree
         prew_predictions = []
         for layer in self.previous_layers:
-            pred,layers_predictions = layer.predict()
+            pred, layers_predictions = layer.predict(inputs, layers_predictions)
             prew_predictions.append(pred)
 
-        res = self.forward(prew_predictions)
-        prew_predictions[id(self)] = res
+        res = self._call_forward(prew_predictions)
+        if self.name is not None:
+            print(self.name, res.shape)
+        layers_predictions[id(self)] = res
 
-        return res, prew_predictions
+        return res, layers_predictions
 
     def _call_forward(self, inputs):
         if self.number_of_inputs is not None:

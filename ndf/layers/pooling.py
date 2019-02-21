@@ -6,10 +6,9 @@ def get_im2col_indices(x_shape, field_height, field_width, padding=1,
                        stride=1):
     # First figure out what the size of the output should be
     N, C, H, W = x_shape
-    assert (H + 2 * padding - field_height) % stride == 0
-    assert (W + 2 * padding - field_height) % stride == 0
-    out_height = (H + 2 * padding - field_height) / stride + 1
-    out_width = (W + 2 * padding - field_width) / stride + 1
+
+    out_height = (H + 2 * padding - field_height) // stride + 1
+    out_width = (W + 2 * padding - field_width) // stride + 1
 
     i0 = np.repeat(np.arange(field_height), field_width)
     i0 = np.tile(i0, C)
@@ -48,14 +47,20 @@ class MaxPooling2D(Layer):
 
     def __init__(self, pool_size, strides=1, **kwargs):
         self.pool_size = pool_size
-        self.stride = strides
+        if isinstance(strides, list) or isinstance(strides, tuple):
+            assert len(strides) == 2
+            assert strides[0] == strides[1], "We are currently supporting only strides with width and height"
+            self.stride = strides[0]
+        else:
+            assert isinstance(strides, int)
+            self.stride = strides
         super(MaxPooling2D, self).__init__(**kwargs)
 
     def forward(self, x):
-        x = x[0]  # this layer has only one input
         # source: https://wiseodd.github.io/techblog/2016/07/18/convnet-maxpool-layer/
         nb, h, w, d = x.shape
-        h_out, w_out = x.shape[1:3] / self.stride
+        h_out = (h - self.pool_size[0]) // self.stride + 1
+        w_out = (w - self.pool_size[1]) // self.stride + 1
 
         x_tranposed = x.transpose(0, 3, 1, 2)
         x_reshaped = x_tranposed.reshape(nb * d, 1, h, w)
@@ -77,10 +82,10 @@ class AveragePooling2D(Layer):
         super(AveragePooling2D, self).__init__(**kwargs)
 
     def forward(self, x):
-        x = x[0]  # this layer has only one input
         # source: https://wiseodd.github.io/techblog/2016/07/18/convnet-maxpool-layer/
         nb, h, w, d = x.shape
-        h_out, w_out = x.shape[1:3] / self.stride
+        h_out = (h - self.pool_size[0]) // self.stride + 1
+        w_out = (w - self.pool_size[1]) // self.stride + 1
 
         x_tranposed = x.transpose(0, 3, 1, 2)
         x_reshaped = x_tranposed.reshape(nb * d, 1, h, w)
