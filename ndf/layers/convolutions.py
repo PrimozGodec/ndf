@@ -1,4 +1,5 @@
 import numpy as np
+from scipy.signal import convolve2d, fftconvolve
 from ndf.layers import Layer
 
 
@@ -11,6 +12,7 @@ class Conv2D(Layer):
             padding="valid", **kwargs):
         self.no_filters = filters
         self.kernel_size = kernel_size
+        assert isinstance(strides, int) or strides[0] == strides[1], "Currently only strides of equal numbers supported"
         if isinstance(strides, list) or isinstance(strides, tuple):
             assert len(strides) == 2
             self.stride = strides
@@ -64,22 +66,41 @@ class Conv2D(Layer):
 
         # paddings
         pad_top, pad_bottom, pad_left, pad_right = self.padding_size(input_im.shape, out_shape)
+        input_im_padded = np.pad(
+            input_im, [[0, 0], [pad_top, pad_bottom], [pad_left, pad_right], [0, 0]],
+            mode="constant", constant_values=0)
+        _, h, w, _ = input_im_padded.shape
 
-        # convolution operation
-        for x in np.arange(nb_batch):
-            for y in np.arange(self.no_filters):
-                for h in np.arange(out_h):
-                    for w in np.arange(out_w):
-                        h_shift, w_shift = h * self.stride[0] - pad_top, w * self.stride[1] - pad_left
+        for b in np.arange(nb_batch):
+            for f in np.arange(self.no_filters):
 
-                        patch = input_im[x,
-                                max(h_shift, 0): min(h_shift + filter_h, in_h),
-                                max(w_shift, 0): min(w_shift + filter_w, in_w)]
-                        we = self.w[
-                            max(0, pad_top - h): filter_h - max(0, h_shift + filter_h - in_h),
-                            max(0, pad_left - w): filter_w - max(0, w_shift + filter_w - in_w),
-                            :, y]
+                # source: https://stackoverflow.com/questions/48097941/strided-convolution-of-2d-in-numpy
+                view = self.as_stride(input_im_padded[b], self.w.shape[:3], self.stride[0])
+                # return numpy.tensordot(aa,kernel,axes=((2,3),(0,1)))
+                outputs[b, :, :, f] = np.sum(view * self.w[:, :, :, f], axis=(2, 3, 4))
 
-                        outputs[x, h, w, y] = np.sum(
-                            patch * we) + self.b[y]
         return outputs
+
+    @staticmethod
+    def as_stride(arr, sub_shape, stride):
+        '''Get a strided sub-matrices view of an ndarray.
+
+        <arr>: ndarray of rank 2.
+        <sub_shape>: tuple of length 2, window size: (ny, nx).
+        <stride>: int, stride of windows.
+
+        Return <subs>: strided window view.
+
+        See also skimage.util.shape.view_as_windows()
+        '''
+        s0, s1 = arr.strides[:2]
+        m1, n1 = arr.shape[:2]
+        m2, n2 = sub_shape[:2]
+
+        view_shape = (1 + (m1 - m2) // stride, 1 + (n1 - n2) // stride, m2,
+                      n2) + arr.shape[2:]
+        strides = (stride * s0, stride * s1, s0, s1) + arr.strides[2:]
+        subs = np.lib.stride_tricks.as_strided(arr, view_shape,
+                                               strides=strides)
+
+        return subs
