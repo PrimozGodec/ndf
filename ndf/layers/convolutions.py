@@ -1,6 +1,6 @@
 import numpy as np
-from scipy.signal import convolve2d, fftconvolve
 from ndf.layers import Layer
+from ndf.utils.image_to_col import im2col_indices
 
 
 class Conv2D(Layer):
@@ -65,42 +65,25 @@ class Conv2D(Layer):
         outputs = np.zeros(out_shape)
 
         # paddings
-        pad_top, pad_bottom, pad_left, pad_right = self.padding_size(input_im.shape, out_shape)
-        input_im_padded = np.pad(
-            input_im, [[0, 0], [pad_top, pad_bottom], [pad_left, pad_right], [0, 0]],
-            mode="constant", constant_values=0)
-        _, h, w, _ = input_im_padded.shape
+        paddings = self.padding_size(input_im.shape, out_shape)
 
-        for b in np.arange(nb_batch):
-            for f in np.arange(self.no_filters):
+        # source: https://wiseodd.github.io/techblog/2016/07/16/convnet-conv-layer/
+        # Let this be 3x3 convolution with stride = 1 and padding = 1
+        # Suppose our X is 5x1x10x10, X_col will be a 9x500 matrix
+        x = input_im.transpose(0, 3, 1, 2)  # to channel first
+        X_col = im2col_indices(
+            x, self.kernel_size[0], self.kernel_size[1],
+            paddings=paddings, stride=self.stride[0])
 
-                # source: https://stackoverflow.com/questions/48097941/strided-convolution-of-2d-in-numpy
-                view = self.as_stride(input_im_padded[b], self.w.shape[:3], self.stride[0])
-                # return numpy.tensordot(aa,kernel,axes=((2,3),(0,1)))
-                outputs[b, :, :, f] = np.sum(view * self.w[:, :, :, f], axis=(2, 3, 4))
+        # Suppose we have 20 of 3x3` filter: 20x1x3x3. W_col will be 20x9 matrix
+        W_col = self.w.transpose(3, 2, 0, 1).reshape(self.no_filters, -1)
 
-        return outputs
+        # 20x9 x 9x500 = 20x500
+        out = W_col @ X_col + self.b[:, None]
 
-    @staticmethod
-    def as_stride(arr, sub_shape, stride):
-        '''Get a strided sub-matrices view of an ndarray.
+        # Reshape back from 20x500 to 5x20x10x10
+        # i.e. for each of our 5 images, we have 20 results with size of 10x10
+        out = out.reshape(self.no_filters, out_h, out_w, nb_batch)
+        out = out.transpose(3, 1, 2, 0)
 
-        <arr>: ndarray of rank 2.
-        <sub_shape>: tuple of length 2, window size: (ny, nx).
-        <stride>: int, stride of windows.
-
-        Return <subs>: strided window view.
-
-        See also skimage.util.shape.view_as_windows()
-        '''
-        s0, s1 = arr.strides[:2]
-        m1, n1 = arr.shape[:2]
-        m2, n2 = sub_shape[:2]
-
-        view_shape = (1 + (m1 - m2) // stride, 1 + (n1 - n2) // stride, m2,
-                      n2) + arr.shape[2:]
-        strides = (stride * s0, stride * s1, s0, s1) + arr.strides[2:]
-        subs = np.lib.stride_tricks.as_strided(arr, view_shape,
-                                               strides=strides)
-
-        return subs
+        return out

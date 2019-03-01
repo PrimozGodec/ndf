@@ -1,3 +1,5 @@
+import time
+
 import pickle
 from PIL import Image
 import numpy as np
@@ -74,5 +76,8 @@ i = i.resize((224, 224))
 im = np.array(i)[None, ...]
 print(im.shape)
 
+
 model = Model([img_input], [x])
-model.predict([im])
+t = time.time()
+print(model.predict([im]))
+print(time.time() - t)
