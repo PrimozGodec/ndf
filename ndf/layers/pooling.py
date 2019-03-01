@@ -64,27 +64,19 @@ class MaxPooling2D(Layer):
         nb, h, w, d = x.shape
         h_out = (h - self.pool_size[0]) // self.stride + 1
         w_out = (w - self.pool_size[1]) // self.stride + 1
-        print("k1", time.time() - t)
+
         x_tranposed = x.transpose(0, 3, 1, 2)
-        print("k2", time.time() - t)
+
         x_reshaped = x_tranposed.reshape(nb * d, 1, h, w)
-        print("k3", time.time() - t)
+
         X_col = im2col_indices(x_reshaped, self.pool_size[0], self.pool_size[1],
                                padding=0, stride=self.stride)
-        print("k4", time.time() - t)
 
-        max_idx = np.argmax(X_col, axis=0)
-        print("k5", time.time() - t)
-
-        out = X_col[max_idx, range(max_idx.size)]
-        print("k6", time.time() - t)
+        out = np.max(X_col, axis=0)
 
         out = out.reshape(h_out, w_out, nb, d)
-        print("k7", time.time() - t)
 
-        ooo = out.transpose(2, 0, 1, 3)
-        print("k8", time.time() - t)
-        return ooo
+        return out.transpose(2, 0, 1, 3)
 
 class AveragePooling2D(Layer):
 
