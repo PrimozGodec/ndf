@@ -13,6 +13,7 @@ setuptools.setup(
     description="NumPy based deep learning framework",
     long_description=long_description,
     long_description_content_type="text/markdown",
+    include_package_data=True,
     url="https://github.com/primozgodec/ndf",
     packages=setuptools.find_packages(),
     install_requires=["numpy", "Pillow"],

@@ -17,7 +17,8 @@ def squeezenet(include_softmax=True):
     classes = 1000
 
     # load weights
-    with open(os.path.join(__location__, "squeezenet_weights.pkl"), "rb") as f:
+    with open(os.path.join(
+            __location__, "weights", "squeezenet_weights.pkl"), "rb") as f:
         weights = pickle.load(f)  # weights have been packed in dictionary
 
     def _fire(x_, filters, name="fire"):
