@@ -14,5 +14,5 @@ it is critical to use Tensorflwo, PyTorch or any other no-Numpy framework.
 
 ### Usage
 
-    The syntax is similar to Keras's.
-    Check the example [squeezenet model](https://github.com/PrimozGodec/ndf/blob/master/ndf/example_models/squeezenet.py).
+The syntax is similar to Keras's.
+Check the example [squeezenet model](https://github.com/PrimozGodec/ndf/blob/master/ndf/example_models/squeezenet.py).
