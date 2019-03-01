@@ -1,17 +1,23 @@
 import pickle
 from PIL import Image
 import numpy as np
+import os
 
 from ndf.layers import Conv2D, ReLU, Concatenate, Input, MaxPooling2D, \
     AveragePooling2D, Flatten, Softmax
 from ndf.model import Model
 
 
+# location of this file
+__location__ = os.path.realpath(
+    os.path.join(os.getcwd(), os.path.dirname(__file__)))
+
+
 def squeezenet():
     classes = 1000
 
     # load weights
-    with open("squeezenet_weights.pkl", "rb") as f:
+    with open(os.path.join(__location__, "squeezenet_weights.pkl"), "rb") as f:
         weights = pickle.load(f)  # weights have been packed in dictionary
 
     def _fire(x_, filters, name="fire"):

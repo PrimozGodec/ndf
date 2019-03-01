@@ -1,0 +1,1 @@
+from ndf.example_models.squeezenet import squeezenet
