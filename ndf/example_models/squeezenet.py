@@ -34,7 +34,7 @@ def _fire(x, filters, name="fire"):
         kernel_weights=weights[name + "/expand3x3"][0],
         bias_weights=weights[name + "/expand3x3"][1])(squeeze)
     expand2 = ReLU()(expand2)
-    x = Concatenate(axis=-1, name=name)([expand1, expand2])
+    x = Concatenate(axis=-1, name=name + "Concat")([expand1, expand2])
 
     return x
 
@@ -79,5 +79,5 @@ print(im.shape)
 
 model = Model([img_input], [x])
 t = time.time()
-print(model.predict([im]))
+p = model.predict([im])
 print(time.time() - t)

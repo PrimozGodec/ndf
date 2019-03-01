@@ -19,5 +19,3 @@ class Model:
             predictions.append(pred)
 
         return predictions
-
-

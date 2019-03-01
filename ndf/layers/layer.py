@@ -35,7 +35,8 @@ class Layer:
 
         t = time.time()
         res = self._call_forward(prew_predictions)
-        print(self.name, res.shape, time.time() - t)
+
+        print(self.name, time.time() - t)
         layers_predictions[id(self)] = res
 
         return res, layers_predictions

@@ -1,6 +1,7 @@
 import numpy as np
 from ndf.layers import Layer
 
+
 class Concatenate(Layer):
 
     number_of_inputs = None

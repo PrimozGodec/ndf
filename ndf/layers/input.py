@@ -11,3 +11,6 @@ class Input(Layer):
 
     def predict(self, inputs, layers_predictions):
         return inputs[id(self)], layers_predictions
+
+    def forward(self, x):
+        pass
