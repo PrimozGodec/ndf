@@ -13,7 +13,7 @@ __location__ = os.path.realpath(
     os.path.join(os.getcwd(), os.path.dirname(__file__)))
 
 
-def squeezenet():
+def squeezenet(include_softmax=True):
     classes = 1000
 
     # load weights
@@ -75,7 +75,8 @@ def squeezenet():
                bias_weights=weights["conv10"][1])(x)
     x = AveragePooling2D(pool_size=(13, 13), name='avgpool10')(x)
     x = Flatten(name='flatten10')(x)
-    x = Softmax(name='softmax')(x)
+    if include_softmax:
+        x = Softmax(name='softmax')(x)
 
     model = Model([img_input], [x])
     return model
