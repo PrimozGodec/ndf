@@ -1,4 +1,3 @@
-from .layer import Layer
 from .convolutions import Conv2D
 from .activations import ReLU, Softmax
 from .input import Input

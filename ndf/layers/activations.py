@@ -1,5 +1,5 @@
 import numpy as np
-from ndf.layers import Layer
+from ndf.layers.layer import Layer
 
 
 class ReLU(Layer):

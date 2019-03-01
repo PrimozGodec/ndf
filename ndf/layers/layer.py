@@ -1,5 +1,3 @@
-import time
-
 from abc import abstractmethod
 
 """
@@ -33,10 +31,8 @@ class Layer:
             pred, layers_predictions = layer.predict(inputs, layers_predictions)
             prew_predictions.append(pred)
 
-        t = time.time()
         res = self._call_forward(prew_predictions)
 
-        print(self.name, time.time() - t)
         layers_predictions[id(self)] = res
 
         return res, layers_predictions

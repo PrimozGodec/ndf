@@ -1,4 +1,4 @@
-from ndf.layers import Layer
+from ndf.layers.layer import Layer
 
 
 class Input(Layer):

@@ -1,5 +1,5 @@
 import numpy as np
-from ndf.layers import Layer
+from ndf.layers.layer import Layer
 from ndf.utils.image_to_col import im2col_indices
 
 
