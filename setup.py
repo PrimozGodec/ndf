@@ -16,7 +16,7 @@ setuptools.setup(
     include_package_data=True,
     url="https://github.com/primozgodec/ndf",
     packages=setuptools.find_packages(),
-    install_requires=["numpy", "Pillow"],
+    install_requires=["numpy >= 1.16.0", "Pillow"],
     classifiers=[
      "Programming Language :: Python :: 3",
      "Operating System :: OS Independent",
