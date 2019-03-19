@@ -11,7 +11,4 @@ install:
   - pip install numpy>=1.13.*
 
 script:
-  - coverage run setup.py test
-
-after_success:
-  - codecov
+  - python setup.py test
