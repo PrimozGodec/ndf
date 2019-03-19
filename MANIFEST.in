@@ -1,2 +1,3 @@
 include ndf/example_models/weights/*
 include ndf/tests/*
+include LICENSE
