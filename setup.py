@@ -7,7 +7,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name='ndf',
-    version='0.1.2',
+    version='0.1.3',
     author="Primoz Godec",
     author_email="primoz492@gmail.com",
     description="NumPy based deep learning framework",
