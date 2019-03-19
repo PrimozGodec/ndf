@@ -7,7 +7,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name='ndf',
-    version='0.1.1',
+    version='0.1.2',
     author="Primoz Godec",
     author_email="primoz492@gmail.com",
     description="NumPy based deep learning framework",
@@ -16,9 +16,9 @@ setuptools.setup(
     include_package_data=True,
     url="https://github.com/primozgodec/ndf",
     packages=setuptools.find_packages(),
-    install_requires=["numpy >= 1.16.0", "Pillow"],
+    install_requires=["numpy>=1.13.0", "Pillow"],
     classifiers=[
-     "Programming Language :: Python :: 3",
-     "Operating System :: OS Independent",
+        "Programming Language :: Python :: 3",
+        "Operating System :: OS Independent",
     ]
 )
