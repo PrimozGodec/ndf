@@ -1,7 +1,7 @@
 # Numpy deep-framework
 
 NumPy based deep learning framework. Implemented for production purposes where
-it is critical to use Tensorflwo, PyTorch or any other no-Numpy framework.
+it is critical to use Tensorflow, PyTorch or any other no-Numpy framework.
 
 ### Installation
 

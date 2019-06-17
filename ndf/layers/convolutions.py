@@ -84,3 +84,41 @@ class Conv2D(Layer):
         out = out.transpose(3, 1, 2, 0)
 
         return out
+
+
+class Conv1D(Layer):
+    
+    number_of_inputs = 1
+
+    def __init__(
+            self, filters, kernel_size, kernel_weights, bias_weights, strides=1,
+            **kwargs):
+        self.no_filters = filters
+        self.kernel_size = kernel_size
+        if isinstance(strides, list) or isinstance(strides, tuple):
+            self.stride = strides[0]
+        else:
+            assert isinstance(strides, int)
+            self.stride = strides
+        self.w = kernel_weights  
+        self.b = bias_weights
+        self.previous_layer = None
+        self.next_layers = []
+        super(Conv1D, self).__init__(**kwargs)
+
+    def forward(self, x):
+        nb_batch, in_h, in_w = x.shape
+        filter_h, filter_w = self.kernel_size, in_w
+
+        out_w = self.no_filters
+        out_h = (in_h - filter_h) // self.stride + 1
+        out_shape = (nb_batch, out_h, out_w)
+
+        out = np.zeros(out_shape)
+        for i_input in range(nb_batch):
+            for y in range(out_h):
+                for filter in range(self.no_filters):
+                    out[i_input, y, filter] = np.sum(np.multiply(
+                        self.w[:, :, filter], x[i_input, y:y + filter_h, :])) + self.b[filter]
+
+        return out
