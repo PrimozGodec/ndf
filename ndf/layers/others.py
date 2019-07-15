@@ -15,7 +15,7 @@ class BatchNorm(Layer):
 
     number_of_inputs = 1
 
-    def __init__(self, gamma, beta, moving_mu, moving_var, epsilon=0.0001, **kwargs):
+    def __init__(self, gamma, beta, moving_mu, moving_var, epsilon=0.001, **kwargs):
         self.gamma = gamma
         self.beta = beta
 
